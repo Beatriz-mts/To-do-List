@@ -6,6 +6,7 @@ from tkinter import ttk
 
 class Todo:
     def __init__(self, root):
+        #========== Create and cofigurate the file of the To Do List ==========#
         self.root = root
         self.root.title('To-do-list')
         self.root.geometry('650x410+300+150')
@@ -28,49 +29,54 @@ class Todo:
         self.text = Text(self.root, bd=5, height=2, width=30, font='arial, 10 bold')
         self.text.place(x=20, y=120)
 
-        #========== Add task ==========#
+    #========== Add task ==========#
 
-        def add():
-            content = self.text.get(1.0, END)
-            self.main_text.insert(END, content)
-            with open('data.txt', 'a') as file:
-                file.write(content)
-                file.seek(0)
-                file.close()
-            self.text.delete(1.0, END)
+    def add(self):
+        content = self.text.get(1.0, END)
+        self.main_text.insert(END, content)
+        with open('data.txt', 'a') as file:
+            file.write(content)
+            file.seek(0)
+        self.text.delete(1.0, END)
+        
+    #========== Delete task ==========#  
 
-        def delete():
-            delete_ = self.main_text.curselection()
-            look = self.main_text.get(delete_)
-            with open('data.txt', 'r+') as f:
-                new_f = f.readlines()
-                f.seek(0)
-                for line in new_f:
-                    item = str(look)
-                    if item not in line:
-                        f.write(line)
-                f.truncate()
-            self.main_text.delete(delete_)
+    def delete(self):
+        delete_ = self.main_text.curselection()
+        look = self.main_text.get(delete_)
+        with open('data.txt', 'r+') as f:
+            new_f = f.readlines()
+            f.seek(0)
+            for line in new_f:
+                item = str(look)
+                if item not in line:
+                    f.write(line)
+            f.truncate()
+        self.main_text.delete(delete_)
 
+    #========== Run the required operations ==========#         
+    
+    def run_operation(self):
         with open('data.txt', 'r') as file:
             read = file.readlines()
             for i in read:
                 ready = i.split()
                 self.main_text.insert(END, ready)
             file.close()
+
+        #========== Configure the add and delete buttons ==========# 
         
-        self.button = Button(self.root, text= "Add", font='sarif, 20 bold italic',
-            width=10, bd=5, bg='green', fg='black', command=add)
-        self.button.place(x=3, y=180)
+        button = Button(self.root, text= "Add", font='sarif, 20 bold italic',
+            width=10, bd=5, bg='green', fg='black', command=self.add)
+        button.place(x=3, y=180)
 
-        self.button2 = Button(self.root, text= "Delete", font='sarif, 20 bold italic',
-            width=10, bd=5, bg='green', fg='black', command=delete)
-        self.button2.place(x=3, y=280)
+        button2 = Button(self.root, text= "Delete", font='sarif, 20 bold italic',
+            width=10, bd=5, bg='green', fg='black', command=self.delete)
+        button2.place(x=3, y=280)
 
-def main():
-    root = Tk()
-    ui = Todo(root)
-    root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    root = Tk()
+    ui = Todo(root)
+    ui.run_operation()
+    root.mainloop()
